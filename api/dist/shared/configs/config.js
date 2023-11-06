@@ -1,0 +1,127 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.config = void 0;
+const profiguration_1 = require("@golevelup/profiguration");
+const common_1 = require("@nestjs/common");
+const logger = new common_1.Logger('Configuration');
+exports.config = (0, profiguration_1.createProfiguration)({
+    db: {
+        port: {
+            default: 5050,
+            format: Number,
+            env: 'MIKRO_ORM_PORT',
+        },
+        ip_address: {
+            default: 'localhost',
+            format: String,
+        },
+        name: {
+            default: 'xmlproject',
+            format: String,
+            env: 'MIKRO_ORM_DB_NAME',
+        },
+        user: {
+            default: 'admin',
+            format: String,
+            env: 'MIKRO_ORM_USER',
+        },
+        password: {
+            default: 'admin',
+            format: String,
+            env: 'MIKRO_ORM_PASSWORD',
+        },
+    },
+    admin: {
+        mail: {
+            default: 'demo@demo.com',
+            format: String,
+            env: 'ADMIN_MAIL',
+        },
+        password: {
+            default: 'root',
+            format: String,
+            env: 'ADMIN_PASSWORD',
+        },
+        firstname: {
+            default: 'John',
+            format: String,
+            env: 'ADMIN_FIRSTNAME',
+        },
+        lastname: {
+            default: 'Doe',
+            format: String,
+            env: 'ADMIN_LASTNAME',
+        },
+    },
+    api: {
+        port: {
+            default: 3000,
+            format: Number,
+            env: 'API_PORT',
+        },
+        nodeEnv: {
+            default: 'dev',
+            env: 'NODE_ENV',
+            format: String,
+        },
+    },
+    websiteUrl: {
+        default: 'http://localhost:3000',
+        format: String,
+        env: 'WEBSITE_URL',
+    },
+    cookie: {
+        secret: {
+            default: 'very_very_very_very_very_very_very_very_very_very_very_very_long_secret_key',
+            format: String,
+            env: 'COOKIE_SECRET',
+        },
+    },
+    jwt: {
+        accessSecret: {
+            default: 'very_very_very_very_very_very_very_very_very_very_very_very_long_secret_key',
+            format: String,
+            env: 'JWT_ACCESS_SECRET',
+        },
+        accessTokenExpirationTime: {
+            default: 3600,
+            format: Number,
+            env: 'JWT_ACCES_TOKEN_EXPIRATION_TIME',
+        },
+        refreshSecret: {
+            default: 'very_very_very_very_very_very_very_very_very_very_very_very_long_secret_key',
+            format: String,
+            env: 'JWT_REFRESH_SECRET',
+        },
+        refreshTokenExpirationTime: {
+            default: 86400,
+            format: Number,
+            env: 'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+        },
+    },
+    redis: {
+        host: {
+            default: 'localhost',
+            format: String,
+            env: 'REDIS_HOST',
+        },
+        port: {
+            default: 6379,
+            format: Number,
+            env: 'REDIS_PORT',
+        },
+        password: {
+            default: '',
+            format: String,
+            env: 'REDIS_PASSWORD',
+        },
+    },
+}, {
+    strict: true,
+    verbose: true,
+    logger: (message) => {
+        logger.log(message);
+    },
+    configureEnv: () => ({ files: '.env' }),
+});
+//# sourceMappingURL=config.js.map
