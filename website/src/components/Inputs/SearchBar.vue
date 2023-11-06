@@ -24,4 +24,5 @@ defineProps({
 	},
 });
 defineEmits(['update:modelValue']);
-const inp
+const input = ref(null);
+</script>

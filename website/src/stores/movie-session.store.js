@@ -94,3 +94,9 @@ export const useMovieSessionStore = defineStore({
 				);
 				return true;
 			} catch (error) {
+				console.error('Error deleting movie session:', error);
+				throw error;
+			}
+		},
+	},
+});

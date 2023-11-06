@@ -69,4 +69,9 @@ export const useMovieStore = defineStore({
 				this.movies = this.movies.filter((movie) => movie.id !== id);
 				return true;
 			} catch (error) {
-				console.err
+				console.error('Error deleting movie:', error);
+				throw error;
+			}
+		},
+	},
+});

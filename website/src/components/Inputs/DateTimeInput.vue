@@ -59,4 +59,6 @@ defineProps({
 
 defineEmits(['update:modelValue']);
 
-cons
+const input = ref(null);
+const isFocused = ref(false);
+</script>

@@ -52,4 +52,11 @@ export const useAuthStore = defineStore('auth', {
 
 			if (parseInt(cookies.refreshTokenExpirationTime) > now) {
 				await this.refreshToken();
-				return tr
+				return true;
+			}
+
+			return false;
+		},
+	},
+	getters: {},
+});

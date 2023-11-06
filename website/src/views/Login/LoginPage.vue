@@ -73,3 +73,9 @@ const error = ref(false);
 
 const login = async () => {
 	if (await authStore.login(usernameInput.value, passwordInput.value)) {
+		router.push('/admin');
+	} else {
+		error.value = true;
+	}
+};
+</script>

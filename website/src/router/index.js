@@ -24,4 +24,6 @@ const routes = [
 ];
 
 export default createRouter({
-	history: createW
+	history: createWebHistory(),
+	routes,
+});
