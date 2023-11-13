@@ -20,6 +20,7 @@ exports.MovieModule = MovieModule = __decorate([
         imports: [nestjs_1.MikroOrmModule.forFeature({ entities: [movie_entity_1.Movie] })],
         controllers: [movie_controller_1.MovieController],
         providers: [movie_service_1.MovieService],
+        exports: [movie_service_1.MovieService],
     })
 ], MovieModule);
 //# sourceMappingURL=movie.module.js.map

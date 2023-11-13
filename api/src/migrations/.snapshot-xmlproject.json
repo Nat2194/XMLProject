@@ -126,8 +126,18 @@
           "nullable": false,
           "mappedType": "integer"
         },
-        "date": {
-          "name": "date",
+        "start_date": {
+          "name": "start_date",
+          "type": "timestamptz(0)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "end_date": {
+          "name": "end_date",
           "type": "timestamptz(0)",
           "unsigned": false,
           "autoincrement": false,

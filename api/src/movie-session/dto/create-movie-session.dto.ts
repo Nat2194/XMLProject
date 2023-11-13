@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 // Custom Imports
 import { IsDateWithTime } from '../decorator/validator';
@@ -7,7 +7,12 @@ export class CreateMovieSessionDto {
   @IsDate()
   @IsNotEmpty()
   @IsDateWithTime()
-  date!: Date;
+  startDate!: Date;
+
+  @IsDate()
+  @IsNotEmpty()
+  @IsDateWithTime()
+  endDate!: Date;
 
   @IsString()
   @IsNotEmpty()
@@ -20,4 +25,8 @@ export class CreateMovieSessionDto {
   @IsString()
   @IsNotEmpty()
   theatreCity!: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  movieId!: number;
 }

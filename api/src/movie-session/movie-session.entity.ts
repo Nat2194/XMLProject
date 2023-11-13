@@ -5,7 +5,8 @@ import { CreateMovieSessionDto } from './dto/create-movie-session.dto';
 @Entity()
 export class MovieSession {
   constructor(dto: CreateMovieSessionDto) {
-    this.date = dto.date;
+    this.startDate = dto.startDate;
+    this.endDate = dto.endDate;
     this.theatreName = dto.theatreName;
     this.theatreAddress = dto.theatreAddress;
     this.theatreCity = dto.theatreCity;
@@ -15,7 +16,10 @@ export class MovieSession {
   sessionId!: number;
 
   @Property()
-  date!: Date;
+  startDate!: Date;
+
+  @Property()
+  endDate!: Date;
 
   @Property()
   theatreName!: string;

@@ -10,5 +10,6 @@ import { Movie } from './movie.entity';
   imports: [MikroOrmModule.forFeature({ entities: [Movie] })],
   controllers: [MovieController],
   providers: [MovieService],
+  exports: [MovieService],
 })
 export class MovieModule {}

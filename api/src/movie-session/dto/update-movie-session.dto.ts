@@ -1,25 +1,27 @@
-import { IsDate, IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsDate, IsString, IsInt, IsOptional } from 'class-validator';
 
 // Custom Imports
 import { IsDateWithTime } from '../decorator/validator';
 
 export class UpdateMovieSessionDto {
   @IsDate()
-  @IsNotEmpty()
-  @IsDateWithTime()
   @IsOptional()
+  @IsDateWithTime()
   date?: Date;
 
   @IsString()
-  @IsNotEmpty()
-  theatreName!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  theatreAddress!: string;
-
-  @IsString()
-  @IsNotEmpty()
   @IsOptional()
-  theatreCity!: string;
+  theatreName?: string;
+
+  @IsString()
+  @IsOptional()
+  theatreAddress?: string;
+
+  @IsString()
+  @IsOptional()
+  theatreCity?: string;
+
+  @IsInt()
+  @IsOptional()
+  movieId?: number;
 }

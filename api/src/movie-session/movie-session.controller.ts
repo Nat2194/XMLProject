@@ -8,10 +8,13 @@ import {
   Patch,
   Delete,
 } from '@nestjs/common';
+
+// Custom Imports
 import { MovieSessionService } from './movie-session.service';
 import { CreateMovieSessionDto, UpdateMovieSessionDto } from './dto'; // Define DTOs for creating and updating movies
 import { MovieSession } from './movie-session.entity'; // Import the Movie entity
-import { Auth } from 'src/auth/auth.decorator';
+import { Auth } from '../auth/auth.decorator';
+import { ParseDatePipe } from '../shared/validators/parse-date-pipe';
 
 @Controller('session')
 export class MovieSessionController {
@@ -42,16 +45,27 @@ export class MovieSessionController {
 
   @Get('city/:cityName')
   findMovieSessionsByCity(
-    @Param('cityName', ParseIntPipe) cityName: string,
+    @Param('cityName') cityName: string,
   ): Promise<MovieSession[]> {
     return this.movieSessionService.findMovieSessionsByCity(cityName);
   }
 
   @Get('date/:date')
   findMovieSessionsByDate(
-    @Param('date', ParseIntPipe) date: Date,
+    @Param('date', ParseDatePipe) date: Date,
   ): Promise<MovieSession[]> {
     return this.movieSessionService.findMovieSessionsByDate(date);
+  }
+
+  @Get('date/:startDate/:endDate')
+  findMovieSessionsByDateRange(
+    @Param('startDate', ParseDatePipe) startDate: Date,
+    @Param('endDate', ParseDatePipe) endDate: Date,
+  ): Promise<MovieSession[]> {
+    return this.movieSessionService.findMovieSessionsByDateRange(
+      startDate,
+      endDate,
+    );
   }
 
   @Auth()

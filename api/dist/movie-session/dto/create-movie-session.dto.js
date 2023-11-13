@@ -20,7 +20,13 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, validator_1.IsDateWithTime)(),
     __metadata("design:type", Date)
-], CreateMovieSessionDto.prototype, "date", void 0);
+], CreateMovieSessionDto.prototype, "startDate", void 0);
+__decorate([
+    (0, class_validator_1.IsDate)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, validator_1.IsDateWithTime)(),
+    __metadata("design:type", Date)
+], CreateMovieSessionDto.prototype, "endDate", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -36,4 +42,9 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateMovieSessionDto.prototype, "theatreCity", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Number)
+], CreateMovieSessionDto.prototype, "movieId", void 0);
 //# sourceMappingURL=create-movie-session.dto.js.map

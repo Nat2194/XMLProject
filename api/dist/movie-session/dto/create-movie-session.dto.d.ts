@@ -1,6 +1,8 @@
 export declare class CreateMovieSessionDto {
-    date: Date;
+    startDate: Date;
+    endDate: Date;
     theatreName: string;
     theatreAddress: string;
     theatreCity: string;
+    movieId: number;
 }

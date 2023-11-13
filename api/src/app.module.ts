@@ -7,9 +7,16 @@ import { AuthModule } from './auth/auth.module';
 import { MovieModule } from './movie/movie.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MovieSessionModule } from './movie-session/movie-session.module';
 
 @Module({
-  imports: [MikroOrmModule.forRoot(), UserModule, AuthModule, MovieModule],
+  imports: [
+    MikroOrmModule.forRoot(),
+    UserModule,
+    AuthModule,
+    MovieModule,
+    MovieSessionModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

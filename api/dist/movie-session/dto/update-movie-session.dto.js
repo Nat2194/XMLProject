@@ -17,25 +17,28 @@ class UpdateMovieSessionDto {
 exports.UpdateMovieSessionDto = UpdateMovieSessionDto;
 __decorate([
     (0, class_validator_1.IsDate)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, validator_1.IsDateWithTime)(),
     (0, class_validator_1.IsOptional)(),
+    (0, validator_1.IsDateWithTime)(),
     __metadata("design:type", Date)
 ], UpdateMovieSessionDto.prototype, "date", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateMovieSessionDto.prototype, "theatreName", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateMovieSessionDto.prototype, "theatreAddress", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateMovieSessionDto.prototype, "theatreCity", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateMovieSessionDto.prototype, "movieId", void 0);
 //# sourceMappingURL=update-movie-session.dto.js.map

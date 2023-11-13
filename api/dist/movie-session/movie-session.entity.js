@@ -15,7 +15,8 @@ const movie_entity_1 = require("../movie/movie.entity");
 const create_movie_session_dto_1 = require("./dto/create-movie-session.dto");
 let MovieSession = class MovieSession {
     constructor(dto) {
-        this.date = dto.date;
+        this.startDate = dto.startDate;
+        this.endDate = dto.endDate;
         this.theatreName = dto.theatreName;
         this.theatreAddress = dto.theatreAddress;
         this.theatreCity = dto.theatreCity;
@@ -29,7 +30,11 @@ __decorate([
 __decorate([
     (0, core_1.Property)(),
     __metadata("design:type", Date)
-], MovieSession.prototype, "date", void 0);
+], MovieSession.prototype, "startDate", void 0);
+__decorate([
+    (0, core_1.Property)(),
+    __metadata("design:type", Date)
+], MovieSession.prototype, "endDate", void 0);
 __decorate([
     (0, core_1.Property)(),
     __metadata("design:type", String)

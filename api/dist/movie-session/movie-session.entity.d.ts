@@ -3,7 +3,8 @@ import { CreateMovieSessionDto } from './dto/create-movie-session.dto';
 export declare class MovieSession {
     constructor(dto: CreateMovieSessionDto);
     sessionId: number;
-    date: Date;
+    startDate: Date;
+    endDate: Date;
     theatreName: string;
     theatreAddress: string;
     theatreCity: string;

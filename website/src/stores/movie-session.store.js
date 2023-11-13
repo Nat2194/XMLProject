@@ -60,6 +60,17 @@ export const useMovieSessionStore = defineStore({
 				throw error;
 			}
 		},
+		async getMovieSessionsByDateRange(startDate, endDate) {
+			try {
+				const response = await $axios.get(
+					`/session/date/${startDate}/${endDate}`
+				);
+				this.movieSessions = response.data;
+			} catch (error) {
+				console.error('Error fetching movie sessions by date:', error);
+				throw error;
+			}
+		},
 		async getMovieSessionsByDate(date) {
 			try {
 				const response = await $axios.get(`/session/date/${date}`);

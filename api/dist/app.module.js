@@ -14,12 +14,19 @@ const auth_module_1 = require("./auth/auth.module");
 const movie_module_1 = require("./movie/movie.module");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
+const movie_session_module_1 = require("./movie-session/movie-session.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [nestjs_1.MikroOrmModule.forRoot(), user_module_1.UserModule, auth_module_1.AuthModule, movie_module_1.MovieModule],
+        imports: [
+            nestjs_1.MikroOrmModule.forRoot(),
+            user_module_1.UserModule,
+            auth_module_1.AuthModule,
+            movie_module_1.MovieModule,
+            movie_session_module_1.MovieSessionModule,
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

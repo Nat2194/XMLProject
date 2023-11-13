@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const movie_session_service_1 = require("./movie-session.service");
 const dto_1 = require("./dto");
 const auth_decorator_1 = require("../auth/auth.decorator");
+const parse_date_pipe_1 = require("../shared/validators/parse-date-pipe");
 let MovieSessionController = class MovieSessionController {
     constructor(movieSessionService) {
         this.movieSessionService = movieSessionService;
@@ -38,6 +39,9 @@ let MovieSessionController = class MovieSessionController {
     }
     findMovieSessionsByDate(date) {
         return this.movieSessionService.findMovieSessionsByDate(date);
+    }
+    findMovieSessionsByDateRange(startDate, endDate) {
+        return this.movieSessionService.findMovieSessionsByDateRange(startDate, endDate);
     }
     update(sessionId, dto) {
         return this.movieSessionService.updateMovieSession(sessionId, dto);
@@ -77,18 +81,27 @@ __decorate([
 ], MovieSessionController.prototype, "findMovieSessionsByMovie", null);
 __decorate([
     (0, common_1.Get)('city/:cityName'),
-    __param(0, (0, common_1.Param)('cityName', common_1.ParseIntPipe)),
+    __param(0, (0, common_1.Param)('cityName')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], MovieSessionController.prototype, "findMovieSessionsByCity", null);
 __decorate([
     (0, common_1.Get)('date/:date'),
-    __param(0, (0, common_1.Param)('date', common_1.ParseIntPipe)),
+    __param(0, (0, common_1.Param)('date', parse_date_pipe_1.ParseDatePipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Date]),
     __metadata("design:returntype", Promise)
 ], MovieSessionController.prototype, "findMovieSessionsByDate", null);
+__decorate([
+    (0, common_1.Get)('date/:startDate/:endDate'),
+    __param(0, (0, common_1.Param)('startDate', parse_date_pipe_1.ParseDatePipe)),
+    __param(1, (0, common_1.Param)('endDate', parse_date_pipe_1.ParseDatePipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Date,
+        Date]),
+    __metadata("design:returntype", Promise)
+], MovieSessionController.prototype, "findMovieSessionsByDateRange", null);
 __decorate([
     (0, auth_decorator_1.Auth)(),
     (0, common_1.Patch)(':id'),

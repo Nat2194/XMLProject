@@ -25,7 +25,11 @@ let MovieSessionService = class MovieSessionService {
         this.movieService = movieService;
     }
     async addSessionToMovie(dto) {
-        if (await this.movieSessionRepository.findOne({ date: dto.date })) {
+        if (await this.movieSessionRepository.findOne({
+            movie: await this.movieService.findMovieById(dto.movieId),
+            startDate: dto.startDate,
+            endDate: dto.endDate,
+        })) {
             throw new common_1.ConflictException('Movie Session with the same date already exists');
         }
         const movieSession = new movie_session_entity_1.MovieSession(dto);
@@ -67,8 +71,23 @@ let MovieSessionService = class MovieSessionService {
     }
     async findMovieSessionsByDate(date) {
         try {
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
             return await this.movieSessionRepository.find({
-                date: date,
+                startDate: { $gte: startOfDay, $lte: endOfDay },
+            });
+        }
+        catch (error) {
+            throw new common_1.NotFoundException('Movie Session not found for this Date');
+        }
+    }
+    async findMovieSessionsByDateRange(startDate, endDate) {
+        try {
+            return await this.movieSessionRepository.find({
+                startDate: startDate,
+                endDate: endDate,
             });
         }
         catch (error) {
