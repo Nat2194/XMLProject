@@ -31,8 +31,11 @@ let MovieSessionController = class MovieSessionController {
     findOne(sessionId) {
         return this.movieSessionService.findMovieSessionById(sessionId);
     }
-    findMovieSessionsByMovie(movieId) {
-        return this.movieSessionService.findMovieSessionsByMovie(movieId);
+    findMovieSessionsByMovieId(movieId) {
+        return this.movieSessionService.findMovieSessionsByMovieId(movieId);
+    }
+    findMovieSessionsByMovieName(name) {
+        return this.movieSessionService.findMovieSessionsByMovieName(name);
     }
     findMovieSessionsByCity(cityName) {
         return this.movieSessionService.findMovieSessionsByCity(cityName);
@@ -78,7 +81,14 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], MovieSessionController.prototype, "findMovieSessionsByMovie", null);
+], MovieSessionController.prototype, "findMovieSessionsByMovieId", null);
+__decorate([
+    (0, common_1.Get)('movie-name/:name'),
+    __param(0, (0, common_1.Param)('name')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MovieSessionController.prototype, "findMovieSessionsByMovieName", null);
 __decorate([
     (0, common_1.Get)('city/:cityName'),
     __param(0, (0, common_1.Param)('cityName')),

@@ -6,7 +6,8 @@ export declare class MovieController {
     constructor(movieService: MovieService);
     create(dto: CreateMovieDto): Promise<Movie>;
     findAll(): Promise<Movie[]>;
-    findOne(movieId: number): Promise<Movie>;
+    findMovieById(movieId: number): Promise<Movie>;
+    findMovieByName(name: string): Promise<Movie>;
     update(movieId: number, dto: UpdateMovieDto): Promise<Movie>;
     delete(movieId: number): Promise<void>;
 }

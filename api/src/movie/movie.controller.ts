@@ -29,8 +29,13 @@ export class MovieController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) movieId: number): Promise<Movie> {
+  findMovieById(@Param('id', ParseIntPipe) movieId: number): Promise<Movie> {
     return this.movieService.findMovieById(movieId);
+  }
+
+  @Get('name/:name')
+  findMovieByName(@Param('name', ParseIntPipe) name: string): Promise<Movie> {
+    return this.movieService.findMovieByName(name);
   }
 
   @Auth()

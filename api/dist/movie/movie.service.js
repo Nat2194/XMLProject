@@ -41,6 +41,25 @@ let MovieService = class MovieService {
             throw new common_1.NotFoundException('Movie not found');
         }
     }
+    async findMovieByName(name) {
+        try {
+            return await this.movieRepository.findOneOrFail({ title: name });
+        }
+        catch (error) {
+            throw new common_1.NotFoundException('Movie not found');
+        }
+    }
+    async findMovieByPartialName(name) {
+        try {
+            const matchesList = await this.movieRepository.find({
+                title: { $ilike: `${name}%` },
+            });
+            return matchesList[0];
+        }
+        catch (error) {
+            throw new common_1.NotFoundException('Movie not found');
+        }
+    }
     async updateMovie(movieId, dto) {
         const movie = await this.findMovieById(movieId);
         (0, core_1.wrap)(movie).assign(dto);

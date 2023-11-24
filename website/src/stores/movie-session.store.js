@@ -36,9 +36,23 @@ export const useMovieSessionStore = defineStore({
 				throw error;
 			}
 		},
-		async getMovieSessionsByMovie(movieId) {
+		async getMovieSessionsByMovieId(movieId) {
 			try {
 				const response = await $axios.get(`/session/movie/${movieId}`);
+				this.movieSessions = response.data;
+			} catch (error) {
+				console.error(
+					'Error fetching movie sessions by movie ID:',
+					error
+				);
+				throw error;
+			}
+		},
+		async getMovieSessionsByMovieName(movieName) {
+			try {
+				const response = await $axios.get(
+					`/session/movie-name/${movieName}`
+				);
 				this.movieSessions = response.data;
 			} catch (error) {
 				console.error(

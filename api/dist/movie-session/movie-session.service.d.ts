@@ -9,7 +9,8 @@ export declare class MovieSessionService {
     addSessionToMovie(dto: CreateMovieSessionDto): Promise<MovieSession>;
     findAllMovieSessions(): Promise<MovieSession[]>;
     findMovieSessionById(sessionId: number): Promise<MovieSession>;
-    findMovieSessionsByMovie(movieId: number): Promise<MovieSession[]>;
+    findMovieSessionsByMovieId(movieId: number): Promise<MovieSession[]>;
+    findMovieSessionsByMovieName(name: string): Promise<MovieSession[]>;
     findMovieSessionsByCity(city: string): Promise<MovieSession[]>;
     findMovieSessionsByDate(date: Date): Promise<MovieSession[]>;
     findMovieSessionsByDateRange(startDate: Date, endDate: Date): Promise<MovieSession[]>;

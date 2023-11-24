@@ -37,10 +37,17 @@ export class MovieSessionController {
   }
 
   @Get('movie/:movieId')
-  findMovieSessionsByMovie(
+  findMovieSessionsByMovieId(
     @Param('movieId', ParseIntPipe) movieId: number,
   ): Promise<MovieSession[]> {
-    return this.movieSessionService.findMovieSessionsByMovie(movieId);
+    return this.movieSessionService.findMovieSessionsByMovieId(movieId);
+  }
+
+  @Get('movie-name/:name')
+  findMovieSessionsByMovieName(
+    @Param('name') name: string,
+  ): Promise<MovieSession[]> {
+    return this.movieSessionService.findMovieSessionsByMovieName(name);
   }
 
   @Get('city/:cityName')

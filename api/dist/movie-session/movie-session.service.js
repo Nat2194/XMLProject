@@ -49,10 +49,20 @@ let MovieSessionService = class MovieSessionService {
             throw new common_1.NotFoundException('Movie Session not found');
         }
     }
-    async findMovieSessionsByMovie(movieId) {
+    async findMovieSessionsByMovieId(movieId) {
         try {
             return await this.movieSessionRepository.find({
                 movie: await this.movieService.findMovieById(movieId),
+            });
+        }
+        catch (error) {
+            throw new common_1.NotFoundException('Movie Session not found for this Movie');
+        }
+    }
+    async findMovieSessionsByMovieName(name) {
+        try {
+            return await this.movieSessionRepository.find({
+                movie: await this.movieService.findMovieByPartialName(name),
             });
         }
         catch (error) {

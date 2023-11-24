@@ -41,6 +41,25 @@ export class MovieService {
     }
   }
 
+  public async findMovieByName(name: string): Promise<Movie> {
+    try {
+      return await this.movieRepository.findOneOrFail({ title: name });
+    } catch (error) {
+      throw new NotFoundException('Movie not found');
+    }
+  }
+
+  public async findMovieByPartialName(name: string): Promise<Movie> {
+    try {
+      const matchesList = await this.movieRepository.find({
+        title: { $ilike: `${name}%` }, // Utilisation de ILIKE pour la recherche insensible à la casse
+      });
+      return matchesList[0];
+    } catch (error) {
+      throw new NotFoundException('Movie not found');
+    }
+  }
+
   public async updateMovie(
     movieId: number,
     dto: UpdateMovieDto,

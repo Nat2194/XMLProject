@@ -7,7 +7,8 @@ export declare class MovieSessionController {
     create(session: CreateMovieSessionDto): Promise<MovieSession>;
     findAll(): Promise<MovieSession[]>;
     findOne(sessionId: number): Promise<MovieSession>;
-    findMovieSessionsByMovie(movieId: number): Promise<MovieSession[]>;
+    findMovieSessionsByMovieId(movieId: number): Promise<MovieSession[]>;
+    findMovieSessionsByMovieName(name: string): Promise<MovieSession[]>;
     findMovieSessionsByCity(cityName: string): Promise<MovieSession[]>;
     findMovieSessionsByDate(date: Date): Promise<MovieSession[]>;
     findMovieSessionsByDateRange(startDate: Date, endDate: Date): Promise<MovieSession[]>;

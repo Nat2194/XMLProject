@@ -27,8 +27,11 @@ let MovieController = class MovieController {
     findAll() {
         return this.movieService.findAllMovies();
     }
-    findOne(movieId) {
+    findMovieById(movieId) {
         return this.movieService.findMovieById(movieId);
+    }
+    findMovieByName(name) {
+        return this.movieService.findMovieByName(name);
     }
     update(movieId, dto) {
         return this.movieService.updateMovie(movieId, dto);
@@ -58,7 +61,14 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], MovieController.prototype, "findOne", null);
+], MovieController.prototype, "findMovieById", null);
+__decorate([
+    (0, common_1.Get)('name/:name'),
+    __param(0, (0, common_1.Param)('name', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MovieController.prototype, "findMovieByName", null);
 __decorate([
     (0, auth_decorator_1.Auth)(),
     (0, common_1.Patch)(':id'),

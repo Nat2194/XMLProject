@@ -8,6 +8,8 @@ export declare class MovieService {
     createMovie(dto: CreateMovieDto): Promise<Movie>;
     findAllMovies(): Promise<Movie[]>;
     findMovieById(movieId: number): Promise<Movie>;
+    findMovieByName(name: string): Promise<Movie>;
+    findMovieByPartialName(name: string): Promise<Movie>;
     updateMovie(movieId: number, dto: UpdateMovieDto): Promise<Movie>;
     deleteMovie(movieId: number): Promise<void>;
     addSessionToMovie(session: MovieSession): Promise<MovieSession>;

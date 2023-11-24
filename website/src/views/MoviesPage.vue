@@ -213,7 +213,7 @@ const searchSessions = () => {
 	const startDate = sessionDate.value[0];
 	const endDate = sessionDate.value[1];
 	const city = sessionCity.value;
-	const movieName = sessionMovieName.value;
+	const movieName = sessionMovieName.value.toLowerCase();
 	console.log(startDate);
 	console.log(endDate);
 

@@ -53,12 +53,24 @@ export class MovieSessionService {
     }
   }
 
-  public async findMovieSessionsByMovie(
+  public async findMovieSessionsByMovieId(
     movieId: number,
   ): Promise<MovieSession[]> {
     try {
       return await this.movieSessionRepository.find({
         movie: await this.movieService.findMovieById(movieId),
+      });
+    } catch (error) {
+      throw new NotFoundException('Movie Session not found for this Movie');
+    }
+  }
+
+  public async findMovieSessionsByMovieName(
+    name: string,
+  ): Promise<MovieSession[]> {
+    try {
+      return await this.movieSessionRepository.find({
+        movie: await this.movieService.findMovieByPartialName(name),
       });
     } catch (error) {
       throw new NotFoundException('Movie Session not found for this Movie');
