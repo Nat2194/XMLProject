@@ -94,6 +94,18 @@ export const useMovieSessionStore = defineStore({
 				throw error;
 			}
 		},
+		async searchMovieSessions(searchCriteria) {
+			try {
+				const response = await $axios.post(
+					'/session/search',
+					searchCriteria
+				);
+				this.movieSessions = response.data;
+			} catch (error) {
+				console.error('Error searching movie sessions:', error);
+				throw error;
+			}
+		},
 		async updateMovieSession(id, dto) {
 			try {
 				const response = await $axios.patch(`/session/${id}`, dto);

@@ -12,6 +12,7 @@ export declare class MovieSessionController {
     findMovieSessionsByCity(cityName: string): Promise<MovieSession[]>;
     findMovieSessionsByDate(date: Date): Promise<MovieSession[]>;
     findMovieSessionsByDateRange(startDate: Date, endDate: Date): Promise<MovieSession[]>;
+    searchMovieSessions(searchCriteria: any): Promise<MovieSession[]>;
     update(sessionId: number, dto: UpdateMovieSessionDto): Promise<MovieSession>;
     delete(sessionId: number): Promise<void>;
 }

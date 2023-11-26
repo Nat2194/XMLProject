@@ -79,6 +79,16 @@ let MovieSessionService = class MovieSessionService {
             throw new common_1.NotFoundException('Movie Session not found for this City');
         }
     }
+    async findMovieSessionsByPartialCity(city) {
+        try {
+            return await this.movieSessionRepository.find({
+                theatreCity: { $ilike: `${city}%` },
+            });
+        }
+        catch (error) {
+            throw new common_1.NotFoundException('Movie Session not found for this City');
+        }
+    }
     async findMovieSessionsByDate(date) {
         try {
             const startOfDay = new Date(date);
@@ -102,6 +112,53 @@ let MovieSessionService = class MovieSessionService {
         }
         catch (error) {
             throw new common_1.NotFoundException('Movie Session not found for this Date');
+        }
+    }
+    async searchMovieSessionsByCriteria(criteria) {
+        const query = {
+            startDate: null,
+            endDate: null,
+            theatreName: null,
+            theatreCity: null,
+            movie: null,
+        };
+        try {
+            if (!criteria.theatreName) {
+                delete query.theatreName;
+            }
+            if (!criteria.startDate) {
+                delete query.startDate;
+                delete query.endDate;
+            }
+            else if (criteria.startDate && !criteria.endDate) {
+                const startOfDay = new Date(criteria.startDate);
+                startOfDay.setHours(0, 0, 0, 0);
+                const endOfDay = new Date(criteria.startDate);
+                endOfDay.setHours(23, 59, 59, 999);
+                query.startDate = { $gte: startOfDay, $lte: endOfDay };
+                delete query.endDate;
+            }
+            else {
+                query.startDate = { $gte: criteria.startDate, $lte: criteria.endDate };
+                query.endDate = { $gte: criteria.startDate, $lte: criteria.endDate };
+            }
+            if (criteria.city) {
+                query.theatreCity = { $ilike: `${criteria.city}%` };
+            }
+            else {
+                delete query.theatreCity;
+            }
+            if (criteria.movieName) {
+                query.movie = await this.movieService.findMovieByPartialName(criteria.movieName);
+            }
+            else {
+                delete query.movie;
+            }
+            console.log(await query);
+            return await this.movieSessionRepository.find(query);
+        }
+        catch (error) {
+            throw new common_1.NotFoundException('Movie Sessions not found for the provided criteria');
         }
     }
     async updateMovieSession(sessionId, dto) {

@@ -87,6 +87,18 @@ export class MovieSessionService {
     }
   }
 
+  public async findMovieSessionsByPartialCity(
+    city: string,
+  ): Promise<MovieSession[]> {
+    try {
+      return await this.movieSessionRepository.find({
+        theatreCity: { $ilike: `${city}%` },
+      });
+    } catch (error) {
+      throw new NotFoundException('Movie Session not found for this City');
+    }
+  }
+
   public async findMovieSessionsByDate(date: Date): Promise<MovieSession[]> {
     try {
       const startOfDay = new Date(date);
@@ -114,6 +126,58 @@ export class MovieSessionService {
       });
     } catch (error) {
       throw new NotFoundException('Movie Session not found for this Date');
+    }
+  }
+
+  public async searchMovieSessionsByCriteria(
+    criteria: any,
+  ): Promise<MovieSession[]> {
+    const query = {
+      startDate: null,
+      endDate: null,
+      theatreName: null,
+      theatreCity: null,
+      movie: null,
+    };
+    try {
+      if (!criteria.theatreName) {
+        delete query.theatreName;
+      }
+      if (!criteria.startDate) {
+        delete query.startDate;
+        delete query.endDate;
+      } else if (criteria.startDate && !criteria.endDate) {
+        // Si endDate n'est pas défini, ajustez le critère pour une date exacte
+        const startOfDay = new Date(criteria.startDate);
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date(criteria.startDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        query.startDate = { $gte: startOfDay, $lte: endOfDay };
+        delete query.endDate;
+      } else {
+        query.startDate = { $gte: criteria.startDate, $lte: criteria.endDate };
+        query.endDate = { $gte: criteria.startDate, $lte: criteria.endDate };
+      }
+      if (criteria.city) {
+        query.theatreCity = { $ilike: `${criteria.city}%` };
+      } else {
+        delete query.theatreCity;
+      }
+      if (criteria.movieName) {
+        query.movie = await this.movieService.findMovieByPartialName(
+          criteria.movieName,
+        );
+      } else {
+        delete query.movie;
+      }
+      console.log(await query);
+      return await this.movieSessionRepository.find(query);
+    } catch (error) {
+      throw new NotFoundException(
+        'Movie Sessions not found for the provided criteria',
+      );
     }
   }
 

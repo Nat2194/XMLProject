@@ -65,17 +65,15 @@
 		</h3>
 
 		<!-- Barre de recherche pour la date -->
-		<VueDatePicker v-model="sessionDate" range></VueDatePicker>
+		<DateRangePicker v-model:sessionDate="sessionDate" />
 
 		<!-- Barre de recherche pour la ville -->
-		<SearchBar
+		<TextInput
 			v-model="sessionCity"
 			placeholder="Ville"
 			class="mb-4"
 			@input="searchSessions"
 		/>
-
-		{{ sessionDate }}
 
 		<!-- Barre de recherche pour le nom du film -->
 		<TextInput
@@ -84,24 +82,6 @@
 			class="mb-4"
 			@input="searchSessions"
 		/>
-
-		<!-- Zone de texte pour des informations supplémentaires -->
-		<TextArea
-			v-model="sessionInfo"
-			placeholder="Informations supplémentaires"
-			class="mb-4"
-		/>
-
-		<!-- Liste des séances de films -->
-		<ul class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-			<li
-				v-for="session in filteredSessions"
-				:key="session.id"
-				class="p-4 border rounded"
-			>
-				{{ session.startTime }} - {{ session.location }}
-			</li>
-		</ul>
 
 		<!-- Utilisez le composant SessionList pour afficher les sessions -->
 		<SessionList :sessions="filteredSessions" />
@@ -116,19 +96,22 @@ import SearchBar from '@/components/Inputs/SearchBar.vue';
 import TextInput from '@/components/Inputs/TextInput.vue';
 import TextArea from '@/components/Inputs/TextAeraInput.vue';
 import SessionList from '../components/SessionList.vue';
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
+import DateRangePicker from '@/components/Inputs/DateRangePicker.vue';
 
 const movieStore = useMovieStore();
 const movieSessionStore = useMovieSessionStore();
 const searchKeyword = ref('');
-const sessionDate = ref();
 const sessionCity = ref('');
 const sessionMovieName = ref('');
-const sessionInfo = ref('');
 
 const currentOffset = ref(0);
 const itemWidth = 100;
+
+const sessionDate = ref({
+	date: null,
+	startTime: null,
+	endTime: null,
+});
 
 // Obtenez la liste des films filtrés en fonction du mot-clé de recherche
 const filteredMovies = computed(() => {
@@ -183,14 +166,6 @@ const startCarousel = () => {
 };
 
 onMounted(() => {
-	const startDate = new Date();
-	startDate.setHours(0, 0, 0, 0); // Définit les heures, minutes, secondes et millisecondes à 0 pour obtenir minuit
-
-	const endDate = new Date(startDate);
-	endDate.setDate(startDate.getDate() + 7);
-	endDate.setHours(23, 59, 59, 999);
-	sessionDate.value = [startDate, endDate];
-
 	startCarousel();
 });
 
@@ -203,35 +178,51 @@ watch(searchKeyword, () => {
 });
 
 // Observez les changements de la recherche de séances
-watch([sessionDate, sessionCity, sessionMovieName, sessionInfo], () => {
-	searchSessions();
-});
+watch(
+	[sessionDate, sessionCity, sessionMovieName],
+	() => {
+		searchSessions();
+	},
+	{ deep: true }
+);
 
 // Fonction pour rechercher des séances de film en fonction des critères
 const searchSessions = () => {
-	console.log('change');
-	const startDate = sessionDate.value[0];
-	const endDate = sessionDate.value[1];
-	const city = sessionCity.value;
-	const movieName = sessionMovieName.value.toLowerCase();
-	console.log(startDate);
-	console.log(endDate);
+	let searchCriteria = {};
 
-	// Utilisez les stores pour rechercher des séances en fonction des critères
-	if (city) {
-		movieSessionStore.getMovieSessionsByCity(city); // Recherche par ville
+	// Vérifiez si une plage horaire est sélectionnée
+	if (sessionDate.value.startTime || sessionDate.value.endTime) {
+		// Convertit la chaîne de date en objet Date
+		const startDateTime = new Date(sessionDate.value.date);
+		const endDateTime = new Date(sessionDate.value.date);
+
+		let [hours, minutes] = sessionDate.value.startTime
+			.split(':')
+			.map(Number);
+		startDateTime.setHours(hours, minutes);
+
+		[hours, minutes] = sessionDate.value.endTime.split(':').map(Number);
+		endDateTime.setHours(hours, minutes);
+
+		// Définit la date de début
+		searchCriteria = {
+			startDate: startDateTime,
+			endDate: endDateTime,
+		};
+	} else {
+		// Utilisez la date seule si aucune plage horaire n'est sélectionnée
+		console.log(sessionDate.value);
+		searchCriteria = {
+			startDate: sessionDate.value.date,
+			endDate: null,
+		};
 	}
-	if (startDate && endDate) {
-		console.log('by range');
-		movieSessionStore.getMovieSessionsByDateRange(startDate, endDate); // Recherche par plage de dates
-	} else if (startDate) {
-		console.log('by date');
-		// Recherche par date uniquement
-		movieSessionStore.getMovieSessionsByDate(startDate);
-	}
-	if (movieName) {
-		// Recherche par nom de film en utilisant le store
-		movieSessionStore.getMovieSessionsByMovieName(movieName);
-	}
+
+	// Ajoutez d'autres critères de recherche
+	searchCriteria.city = sessionCity.value;
+	searchCriteria.movieName = sessionMovieName.value.toLowerCase();
+
+	// Appelez la méthode de recherche du store
+	movieSessionStore.searchMovieSessions(searchCriteria);
 };
 </script>

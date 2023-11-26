@@ -38,13 +38,16 @@ let MovieSessionController = class MovieSessionController {
         return this.movieSessionService.findMovieSessionsByMovieName(name);
     }
     findMovieSessionsByCity(cityName) {
-        return this.movieSessionService.findMovieSessionsByCity(cityName);
+        return this.movieSessionService.findMovieSessionsByPartialCity(cityName);
     }
     findMovieSessionsByDate(date) {
         return this.movieSessionService.findMovieSessionsByDate(date);
     }
     findMovieSessionsByDateRange(startDate, endDate) {
         return this.movieSessionService.findMovieSessionsByDateRange(startDate, endDate);
+    }
+    searchMovieSessions(searchCriteria) {
+        return this.movieSessionService.searchMovieSessionsByCriteria(searchCriteria);
     }
     update(sessionId, dto) {
         return this.movieSessionService.updateMovieSession(sessionId, dto);
@@ -112,6 +115,13 @@ __decorate([
         Date]),
     __metadata("design:returntype", Promise)
 ], MovieSessionController.prototype, "findMovieSessionsByDateRange", null);
+__decorate([
+    (0, common_1.Post)('search'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MovieSessionController.prototype, "searchMovieSessions", null);
 __decorate([
     (0, auth_decorator_1.Auth)(),
     (0, common_1.Patch)(':id'),

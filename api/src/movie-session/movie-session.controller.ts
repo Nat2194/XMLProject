@@ -54,7 +54,7 @@ export class MovieSessionController {
   findMovieSessionsByCity(
     @Param('cityName') cityName: string,
   ): Promise<MovieSession[]> {
-    return this.movieSessionService.findMovieSessionsByCity(cityName);
+    return this.movieSessionService.findMovieSessionsByPartialCity(cityName);
   }
 
   @Get('date/:date')
@@ -72,6 +72,13 @@ export class MovieSessionController {
     return this.movieSessionService.findMovieSessionsByDateRange(
       startDate,
       endDate,
+    );
+  }
+
+  @Post('search')
+  searchMovieSessions(@Body() searchCriteria: any): Promise<MovieSession[]> {
+    return this.movieSessionService.searchMovieSessionsByCriteria(
+      searchCriteria,
     );
   }
 
