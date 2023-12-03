@@ -1,7 +1,5 @@
-<script setup lang="js">
-import MoviesPage from "./views/MoviesPage.vue";
-</script>
+<script setup></script>
 
 <template>
-	<MoviesPage></MoviesPage>
+	<router-view />
 </template>

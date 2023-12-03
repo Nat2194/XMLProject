@@ -23,6 +23,8 @@ export class MovieSessionService {
   public async addSessionToMovie(
     dto: CreateMovieSessionDto,
   ): Promise<MovieSession> {
+    console.log(dto);
+    console.log(dto.movieId);
     if (
       await this.movieSessionRepository.findOne({
         movie: await this.movieService.findMovieById(dto.movieId),
@@ -35,12 +37,15 @@ export class MovieSessionService {
       );
     }
     const movieSession = new MovieSession(dto);
-    await this.movieSessionRepository.flush();
+    console.log(dto.movieId);
+    movieSession.movie = await this.movieService.findMovieById(dto.movieId);
+    console.log(movieSession.movie);
+    await this.movieSessionRepository.persistAndFlush(movieSession);
     return await this.movieService.addSessionToMovie(movieSession);
   }
 
   public async findAllMovieSessions(): Promise<MovieSession[]> {
-    return this.movieSessionRepository.findAll();
+    return await this.movieSessionRepository.findAll();
   }
 
   public async findMovieSessionById(sessionId: number): Promise<MovieSession> {
@@ -172,7 +177,6 @@ export class MovieSessionService {
       } else {
         delete query.movie;
       }
-      console.log(await query);
       return await this.movieSessionRepository.find(query);
     } catch (error) {
       throw new NotFoundException(

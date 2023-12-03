@@ -30,7 +30,7 @@ export class MovieService {
   }
 
   public async findAllMovies(): Promise<Movie[]> {
-    return this.movieRepository.findAll();
+    return await this.movieRepository.findAll();
   }
 
   public async findMovieById(movieId: number): Promise<Movie> {

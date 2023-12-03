@@ -38,7 +38,10 @@
 					</div>
 				</div>
 
-				<button class="btn-primary w-full" @click.prevent="login">
+				<button
+					class="bg-blue-900 w-full text-white px-4 py-2 rounded-md"
+					@click.prevent="login"
+				>
 					Login
 				</button>
 			</form>

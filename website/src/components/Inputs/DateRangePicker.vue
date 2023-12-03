@@ -54,9 +54,6 @@ const sessionDate = ref(props.sessionDate);
 const emit = defineEmits(['update:sessionDate']);
 
 const emitChanges = () => {
-	console.log(sessionDate.value.date);
-	console.log(sessionDate.value.startTime);
-	console.log(sessionDate.value.endTime);
 	emit('update:sessionDate', sessionDate.value);
 };
 </script>

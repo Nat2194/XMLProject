@@ -11,52 +11,18 @@
 				class="mb-4"
 				@input="searchMovies"
 			/>
-			<div class="relative overflow-hidden">
-				<ul
-					v-show="filteredMovies.length > 0"
-					class="flex transition-transform duration-500 ease-in-out"
-					:style="{ transform: `translateX(${currentOffset}px)` }"
-				>
-					<li
-						v-for="(movie, index) in filteredMovies"
-						:key="index"
-						class="p-4 border rounded w-full md:w-1/2 lg:w-1/3 xl:w-1/4"
-					>
-						<img
-							src="https://placehold.it/200x200"
-							alt="Movie Poster"
-						/>
-						<div class="p-2">
-							<p class="text-lg font-semibold">
-								{{ movie.title }}
-							</p>
-							<div class="flex flex-wrap">
-								<p
-									v-for="(tag, tagIndex) in movie.tag"
-									:key="tagIndex"
-									class="tag"
-									:class="{ secondary: tagIndex > 0 }"
-								>
-									{{ tag }}
-								</p>
-							</div>
-						</div>
-					</li>
-				</ul>
-
-				<button
-					class="absolute top-1/2 left-2 transform -translate-y-1/2"
-					@click="moveCarousel(-1)"
-				>
-					&lt;
-				</button>
-				<button
-					class="absolute top-1/2 right-2 transform -translate-y-1/2"
-					@click="moveCarousel(1)"
-				>
-					&gt;
-				</button>
-			</div>
+			<!-- Afficher les détails du film si un film est sélectionné -->
+			<MovieDetails
+				v-if="selectedMovie"
+				:movie="selectedMovie"
+				@back="backToCarousel"
+			/>
+			<!-- Afficher le carrousel si aucun film n'est sélectionné -->
+			<MovieCarousel
+				v-else
+				v-model:searchKeyword="searchKeyword"
+				@select-movie="selectMovie"
+			/>
 		</div>
 
 		<!-- Titre pour les séances de film -->
@@ -89,14 +55,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useMovieStore } from '@/stores/movie.store.js';
 import { useMovieSessionStore } from '@/stores/movie-session.store.js';
 import SearchBar from '@/components/Inputs/SearchBar.vue';
 import TextInput from '@/components/Inputs/TextInput.vue';
-import TextArea from '@/components/Inputs/TextAeraInput.vue';
-import SessionList from '../components/SessionList.vue';
+import SessionList from '@/components/SessionList.vue';
 import DateRangePicker from '@/components/Inputs/DateRangePicker.vue';
+import MovieCarousel from '@/components/MovieCarousel.vue';
+import MovieDetails from '@/components/MovieDetails.vue';
 
 const movieStore = useMovieStore();
 const movieSessionStore = useMovieSessionStore();
@@ -104,22 +71,23 @@ const searchKeyword = ref('');
 const sessionCity = ref('');
 const sessionMovieName = ref('');
 
-const currentOffset = ref(0);
-const itemWidth = 100;
-
 const sessionDate = ref({
 	date: null,
 	startTime: null,
 	endTime: null,
 });
 
-// Obtenez la liste des films filtrés en fonction du mot-clé de recherche
-const filteredMovies = computed(() => {
-	const keyword = searchKeyword.value.toLowerCase();
-	return movieStore.getMovies.filter((movie) =>
-		movie.title.toLowerCase().includes(keyword)
-	);
-});
+const selectedMovie = ref(null); // Ajout de la réf pour le film sélectionné
+
+// Définition de la méthode pour sélectionner un film
+const selectMovie = (movie) => {
+	selectedMovie.value = movie;
+};
+
+// Méthode pour gérer le retour au carrousel
+const backToCarousel = () => {
+	selectedMovie.value = null;
+};
 
 // Obtenez la liste des séances de films filtrées en fonction des critères de recherche
 const filteredSessions = computed(() => {
@@ -127,55 +95,9 @@ const filteredSessions = computed(() => {
 	return movieSessionStore.movieSessions;
 });
 
-const moveCarousel = (direction) => {
-	console.log('moving');
-	const maxOffset = itemWidth * -1 * (filteredMovies.value.length - 1);
-	if (direction === 1 && currentOffset.value > maxOffset) {
-		currentOffset.value -= itemWidth;
-	} else if (direction === -1 && currentOffset.value < 0) {
-		currentOffset.value += itemWidth;
-	}
-};
-
 const searchMovies = () => {
-	currentOffset.value = 0;
 	movieStore.getAllMovies();
-	startCarousel();
 };
-
-const startCarousel = () => {
-	const maxOffset =
-		itemWidth * -1 * (filteredMovies.value.length - itemsPerPage);
-
-	const move = () => {
-		currentOffset.value -= itemWidth;
-
-		if (currentOffset.value <= maxOffset) {
-			currentOffset.value = 0;
-		}
-
-		setTimeout(move, 5000);
-	};
-
-	// Démarrez le carrousel après que les films ont été chargés
-	watch(filteredMovies, () => {
-		if (filteredMovies.value.length > 0) {
-			move();
-		}
-	});
-};
-
-onMounted(() => {
-	startCarousel();
-});
-
-const itemsPerPage = 2; // Nombre de films à afficher sur une seule ligne
-
-watch(searchKeyword, searchMovies);
-// Observez les changements de la recherche de films
-watch(searchKeyword, () => {
-	searchMovies();
-});
 
 // Observez les changements de la recherche de séances
 watch(
@@ -211,7 +133,6 @@ const searchSessions = () => {
 		};
 	} else {
 		// Utilisez la date seule si aucune plage horaire n'est sélectionnée
-		console.log(sessionDate.value);
 		searchCriteria = {
 			startDate: sessionDate.value.date,
 			endDate: null,
