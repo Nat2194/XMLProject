@@ -1,5 +1,5 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/postgresql';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
 import {
   Injectable,
   ConflictException,
@@ -40,11 +40,16 @@ export class MovieSessionService {
     console.log(dto.movieId);
     movieSession.movie = await this.movieService.findMovieById(dto.movieId);
     console.log(movieSession.movie);
+
     await this.movieSessionRepository.persistAndFlush(movieSession);
-    return await this.movieService.addSessionToMovie(movieSession);
+
+    console.log(await this.movieSessionRepository.findAll());
+
+    return movieSession;
   }
 
   public async findAllMovieSessions(): Promise<MovieSession[]> {
+    console.log('findAll');
     return await this.movieSessionRepository.findAll();
   }
 
@@ -142,8 +147,9 @@ export class MovieSessionService {
       endDate: null,
       theatreName: null,
       theatreCity: null,
-      movie: null,
+      movieId: null,
     };
+    console.log(await this.findAllMovieSessions());
     try {
       if (!criteria.theatreName) {
         delete query.theatreName;
@@ -171,11 +177,11 @@ export class MovieSessionService {
         delete query.theatreCity;
       }
       if (criteria.movieName) {
-        query.movie = await this.movieService.findMovieByPartialName(
+        query.movieId = await this.movieService.findMovieByPartialName(
           criteria.movieName,
         );
       } else {
-        delete query.movie;
+        delete query.movieId;
       }
       return await this.movieSessionRepository.find(query);
     } catch (error) {
@@ -196,7 +202,13 @@ export class MovieSessionService {
   }
 
   public async deleteMovieSession(sessionId: number): Promise<void> {
-    const session = await this.findMovieSessionById(sessionId);
-    await this.movieSessionRepository.removeAndFlush(session);
+    try {
+      const session = await this.findMovieSessionById(sessionId);
+      await this.movieSessionRepository.removeAndFlush(session);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+    }
   }
 }

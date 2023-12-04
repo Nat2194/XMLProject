@@ -142,7 +142,7 @@
 				<label for="sessionId" class="block">Id de Séance:</label>
 				<input
 					id="sessionId"
-					v-model="sessionData.id"
+					v-model="sessionId"
 					class="input"
 					required
 				/>
@@ -246,6 +246,15 @@
 			class="mb-4"
 			@submit.prevent="deleteSession"
 		>
+			<div class="form-group">
+				<label for="sessionId" class="block">Id de Séance:</label>
+				<input
+					id="sessionId"
+					v-model="sessionId"
+					class="input"
+					required
+				/>
+			</div>
 			<button type="submit" class="btn-primary">
 				Supprimer le compte
 			</button>
@@ -274,7 +283,6 @@ const sessionStore = useMovieSessionStore();
 
 // Données pour les formulaires de création, mise à jour et suppression
 const sessionData = ref({
-	id: null,
 	startDate: null,
 	endDate: null,
 	theatreName: '',
@@ -282,6 +290,8 @@ const sessionData = ref({
 	theatreCity: '',
 	movieId: null,
 });
+
+const sessionId = ref(null);
 
 const selectedMovie = ref(null); // Ajout de la réf pour le film sélectionné
 const searchKeyword = ref('');
@@ -328,7 +338,10 @@ const createSession = async () => {
 const updateSession = async () => {
 	result.value = '';
 	try {
-		const response = await sessionStore.updateMovieSession(sessionData);
+		const response = await sessionStore.updateMovieSession(
+			sessionId.value,
+			sessionData.value
+		);
 		if (response.data === false) {
 			result.value = 'Séance non trouvée'; // Message d'erreur
 		} else {
@@ -342,7 +355,7 @@ const updateSession = async () => {
 const deleteSession = async () => {
 	result.value = '';
 	try {
-		const response = await sessionStore.deleteMovieSession(sessionData);
+		const response = await sessionStore.deleteMovieSession(sessionId.value);
 		if (response.data === true) {
 			result.value = 'Séance supprimée'; // Message de succès ou autre traitement
 		} else {

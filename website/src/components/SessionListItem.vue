@@ -2,6 +2,7 @@
 
 <template>
 	<div class="p-4 border rounded">
+		<p>Id : {{ session.sessionId }}</p>
 		<p>
 			{{ formattedDate }} - {{ session.theatreName }} -
 			{{ session.theatreCity }}

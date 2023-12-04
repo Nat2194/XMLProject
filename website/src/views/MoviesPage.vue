@@ -1,5 +1,14 @@
 <template>
 	<div class="container mx-auto p-4">
+		<div class="flex justify-end mb-4">
+			<router-link to="/admin">
+				<button
+					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+				>
+					Admin
+				</button>
+			</router-link>
+		</div>
 		<!-- Titre de la page -->
 		<div>
 			<h2 class="text-3xl font-bold mb-4">Liste des Films</h2>

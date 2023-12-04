@@ -75,10 +75,26 @@ export class MovieService {
     await this.movieRepository.removeAndFlush(movie);
   }
 
-  public async addSessionToMovie(session: MovieSession): Promise<MovieSession> {
-    const movie = session.movie;
-    movie.sessions.add(session);
-    await this.movieRepository.flush();
-    return session;
+  public async addSessionToMovie(
+    movieId: number,
+    session: MovieSession,
+  ): Promise<MovieSession> {
+    console.log('test');
+    try {
+      const movie = await this.findMovieById(movieId);
+
+      if (!movie) {
+        throw new Error('Movie not found');
+      }
+
+      movie.sessions.add(session);
+
+      movie.sessions.add(session);
+      await this.movieRepository.flush();
+
+      return session;
+    } catch (error) {
+      throw error;
+    }
   }
 }
