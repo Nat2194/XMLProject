@@ -298,7 +298,6 @@ const searchKeyword = ref('');
 
 // Définition de la méthode pour sélectionner un film
 const selectMovie = (movie) => {
-	console.log(movie);
 	selectedMovie.value = movie;
 };
 
@@ -320,7 +319,6 @@ const createSession = async () => {
 		return null;
 	}
 	sessionData.value.movieId = selectedMovie.value.movieId;
-	console.log(sessionData.value);
 	try {
 		const response = await sessionStore.createMovieSession(
 			sessionData.value

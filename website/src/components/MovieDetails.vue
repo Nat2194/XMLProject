@@ -1,5 +1,8 @@
 <template>
-	<div class="bg-white shadow-lg rounded-lg overflow-hidden">
+	<div
+		v-if="showDetails"
+		class="bg-white shadow-lg rounded-lg overflow-hidden"
+	>
 		<div
 			v-if="props.movie.posterUrl"
 			class="bg-cover bg-center h-72 p-4"
@@ -31,7 +34,13 @@
 			<p><strong>Main Actors:</strong> {{ props.movie.mainActors }}</p>
 			<div class="mt-4">
 				<button
-					class="mt-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+					class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-8 rounded"
+					@click="showSessionList"
+				>
+					Séances
+				</button>
+				<button
+					class="mt-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 ml-8 rounded"
 					@click="backToCarousel"
 				>
 					Retour
@@ -39,15 +48,36 @@
 			</div>
 		</div>
 	</div>
+	<div v-else class="flex flex-col">
+		<div class="flex justify-end">
+			<button
+				class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+				@click="showDetails = true"
+			>
+				Retour
+			</button>
+		</div>
+		<SessionList :sessions="filteredSessions" />
+	</div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ref, computed } from 'vue';
+import SessionList from '@/components/SessionList.vue';
+import { useMovieSessionStore } from '@/stores/movie-session.store.js';
+
+const movieSessionStore = useMovieSessionStore();
+
+const filteredSessions = computed(() => {
+	// Utilisez les résultats du store pour les séances de films
+	return movieSessionStore.movieSessions;
+});
 
 const props = defineProps({
 	movie: {
 		type: Object,
 		default: () => ({
+			id: null,
 			title: '',
 			duration: 0,
 			language: '',
@@ -66,8 +96,11 @@ const emit = defineEmits(['back']);
 const backToCarousel = () => {
 	emit('back');
 };
-</script>
 
-<style scoped>
-/* Vous pouvez ajouter des styles supplémentaires ici si nécessaire */
-</style>
+const showDetails = ref(true);
+
+const showSessionList = () => {
+	showDetails.value = false;
+	movieSessionStore.getMovieSessionsByMovieId(props.movie.movieId);
+};
+</script>

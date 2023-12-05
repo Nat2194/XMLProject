@@ -21,6 +21,11 @@ const routes = [
 		name: 'Movies',
 		component: () => import('@/views/MoviesPage.vue'),
 	},
+	{
+		path: '/sessions',
+		name: 'Sessions',
+		component: () => import('@/views/SessionsPage.vue'),
+	},
 ];
 
 export default createRouter({

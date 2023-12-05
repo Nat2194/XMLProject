@@ -167,12 +167,9 @@ const move = () => {
 };
 
 const startCarousel = () => {
-	console.log('startCarousel');
 	// Start the carousel after the movies have been loaded
 	watch(filteredMovies, () => {
-		console.log('changes');
 		if (filteredMovies.value.length > 0) {
-			console.log('length');
 			clearTimeout(carouselTimeoutId);
 			move();
 		}
@@ -181,11 +178,9 @@ const startCarousel = () => {
 
 const moveCarousel = (direction) => {
 	if (direction === 1) {
-		console.log('1');
 		currentOffset.value -= itemWidth;
 		endIndex += 1;
 	} else if (direction === -1) {
-		console.log('2');
 		currentOffset.value += itemWidth;
 		endIndex -= 1;
 	}
@@ -193,7 +188,6 @@ const moveCarousel = (direction) => {
 	// Clear the previous timeout
 	clearTimeout(carouselTimeoutId);
 	carouselTimeoutId = setTimeout(move, 10000);
-	console.log('6');
 
 	setTimeout(() => {
 		currentOffset.value = 0;
@@ -214,8 +208,6 @@ onMounted(() => {
 watch(searchKeyword, searchMovies);
 // Observez les changements de la recherche de films
 watch(searchKeyword, () => {
-	console.log('keyword');
-	console.log(searchKeyword.value);
 	searchMovies();
 });
 

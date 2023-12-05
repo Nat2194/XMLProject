@@ -17,7 +17,6 @@ export const useMovieStore = defineStore({
 	},
 	actions: {
 		async createMovie(dto) {
-			console.log(dto);
 			try {
 				const response = await $axios.post('/movie', dto);
 				this.movies.push(response.data);
