@@ -23,8 +23,6 @@ export class MovieSessionService {
   public async addSessionToMovie(
     dto: CreateMovieSessionDto,
   ): Promise<MovieSession> {
-    console.log(dto);
-    console.log(dto.movieId);
     if (
       await this.movieSessionRepository.findOne({
         movie: await this.movieService.findMovieById(dto.movieId),
@@ -37,19 +35,14 @@ export class MovieSessionService {
       );
     }
     const movieSession = new MovieSession(dto);
-    console.log(dto.movieId);
     movieSession.movie = await this.movieService.findMovieById(dto.movieId);
-    console.log(movieSession.movie);
 
     await this.movieSessionRepository.persistAndFlush(movieSession);
-
-    console.log(await this.movieSessionRepository.findAll());
 
     return movieSession;
   }
 
   public async findAllMovieSessions(): Promise<MovieSession[]> {
-    console.log('findAll');
     return await this.movieSessionRepository.findAll();
   }
 
@@ -147,9 +140,8 @@ export class MovieSessionService {
       endDate: null,
       theatreName: null,
       theatreCity: null,
-      movieId: null,
+      movie: null,
     };
-    console.log(await this.findAllMovieSessions());
     try {
       if (!criteria.theatreName) {
         delete query.theatreName;
@@ -176,12 +168,13 @@ export class MovieSessionService {
       } else {
         delete query.theatreCity;
       }
+      console.log(criteria.movieName);
       if (criteria.movieName) {
-        query.movieId = await this.movieService.findMovieByPartialName(
+        query.movie = await this.movieService.findMovieByPartialName(
           criteria.movieName,
         );
       } else {
-        delete query.movieId;
+        delete query.movie;
       }
       return await this.movieSessionRepository.find(query);
     } catch (error) {
