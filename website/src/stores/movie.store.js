@@ -20,7 +20,7 @@ export const useMovieStore = defineStore({
 			try {
 				const response = await $axios.post('/movie', dto);
 				this.movies.push(response.data);
-				return response.data;
+				return response;
 			} catch (error) {
 				console.error('Error creating movie:', error);
 				throw error;
@@ -57,7 +57,7 @@ export const useMovieStore = defineStore({
 						return movie;
 					}
 				});
-				return response.data;
+				return response;
 			} catch (error) {
 				console.error('Error updating movie:', error);
 				throw error;
@@ -65,9 +65,9 @@ export const useMovieStore = defineStore({
 		},
 		async deleteMovie(id) {
 			try {
-				await $axios.delete(`/movie/${id}`);
+				const response = await $axios.delete(`/movie/${id}`);
 				this.movies = this.movies.filter((movie) => movie.id !== id);
-				return true;
+				return response;
 			} catch (error) {
 				console.error('Error deleting movie:', error);
 				throw error;

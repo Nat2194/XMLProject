@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Delete,
+  HttpStatus,
 } from '@nestjs/common';
 import { MovieService } from './movie.service'; // Import the MovieService
 import { CreateMovieDto, UpdateMovieDto } from './dto'; // Define DTOs for creating and updating movies
@@ -34,7 +35,7 @@ export class MovieController {
   }
 
   @Get('name/:name')
-  findMovieByName(@Param('name', ParseIntPipe) name: string): Promise<Movie> {
+  findMovieByName(@Param('name') name: string): Promise<Movie> {
     return this.movieService.findMovieByName(name);
   }
 
@@ -49,7 +50,7 @@ export class MovieController {
 
   @Auth() // Add authentication decorator if needed
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) movieId: number): Promise<void> {
+  delete(@Param('id', ParseIntPipe) movieId: number): Promise<HttpStatus> {
     return this.movieService.deleteMovie(movieId);
   }
 }

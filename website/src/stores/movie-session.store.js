@@ -12,7 +12,7 @@ export const useMovieSessionStore = defineStore({
 			try {
 				const response = await $axios.post('/session', sessionData);
 				this.movieSessions.push(response.data);
-				return response.data;
+				return response;
 			} catch (error) {
 				console.error('Error creating movie session:', error);
 				throw error;
@@ -117,7 +117,8 @@ export const useMovieSessionStore = defineStore({
 						return session;
 					}
 				});
-				return response.data;
+				console.log(response);
+				return response;
 			} catch (error) {
 				console.error('Error updating movie session:', error);
 				throw error;
@@ -125,11 +126,11 @@ export const useMovieSessionStore = defineStore({
 		},
 		async deleteMovieSession(id) {
 			try {
-				await $axios.delete(`/session/${id}`);
+				const response = await $axios.delete(`/session/${id}`);
 				this.movieSessions = this.movieSessions.filter(
 					(session) => session.id !== id
 				);
-				return true;
+				return response;
 			} catch (error) {
 				console.error('Error deleting movie session:', error);
 				throw error;

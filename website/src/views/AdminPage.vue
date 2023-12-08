@@ -20,13 +20,6 @@
 
 		<div class="space-x-4 mb-4">
 			<!-- Style des boutons pour changer de formulaire -->
-			<!---<button
-				class="btn-primary"
-				:class="{ 'btn-active': activeForm === 'accounts' }"
-				@click="changeForm('accounts')"
-			>
-				Comptes
-			</button>-->
 			<button
 				class="btn-primary"
 				:class="{ 'btn-active': activeForm === 'movies' }"
@@ -41,6 +34,13 @@
 			>
 				Séances
 			</button>
+			<button
+				class="btn-primary"
+				:class="{ 'btn-active': activeForm === 'accounts' }"
+				@click="changeForm('accounts')"
+			>
+				Comptes
+			</button>
 		</div>
 
 		<!-- Ajout du trait horizontal bleu -->
@@ -53,7 +53,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-// import AccountsManagement from '../components/Admin/AccountsManagement.vue';
+import AccountsManagement from '../components/Admin/AccountsManagement.vue';
 import MoviesManagement from '../components/Admin/MoviesManagement.vue';
 import SessionsManagement from '../components/Admin/SessionsManagement.vue';
 import { useAuthStore } from '@/stores/auth.store';
@@ -75,8 +75,8 @@ const activeForm = ref('create');
 // Fonctions pour changer le formulaire actif
 const activeFormComponent = computed(() => {
 	switch (activeForm.value) {
-		//case 'accounts':
-		//	return AccountsManagement;
+		case 'accounts':
+			return AccountsManagement;
 		case 'movies':
 			return MoviesManagement;
 		case 'sessions':

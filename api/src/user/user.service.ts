@@ -1,6 +1,11 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  HttpStatus,
+} from '@nestjs/common';
 import { wrap } from '@mikro-orm/core';
 
 // Custom Packages
@@ -34,6 +39,36 @@ export class UserService {
     });
   }
 
+  public async searchUsersByCriteria(criteria: any): Promise<User[]> {
+    const query = {
+      mail: null,
+      firstname: null,
+      lastname: null,
+    };
+    console.log('service');
+    try {
+      if (!criteria.mail) {
+        delete query.mail;
+      } else {
+        query.mail = { $ilike: `${criteria.mail}%` };
+      }
+      if (!criteria.firstname) {
+        delete query.firstname;
+      } else {
+        query.firstname = { $ilike: `${criteria.firstname}%` };
+      }
+      if (!criteria.lastname) {
+        delete query.lastname;
+      } else {
+        query.lastname = { $ilike: `${criteria.lastname}%` };
+      }
+      console.log(query);
+      return await this.userRepository.find(query);
+    } catch (error) {
+      throw new NotFoundException('User not found for the provided criteria');
+    }
+  }
+
   public async update(userId: number, dto: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findOneOrFail({
       userId,
@@ -46,12 +81,17 @@ export class UserService {
     return user;
   }
 
-  public async delete(userId: number): Promise<void> {
-    await this.userRepository.removeAndFlush(
-      await this.userRepository.findOneOrFail({
-        userId,
-      }),
-    );
+  public async delete(userId: number): Promise<HttpStatus> {
+    try {
+      await this.userRepository.removeAndFlush(
+        await this.userRepository.findOneOrFail({
+          userId,
+        }),
+      );
+      return HttpStatus.NO_CONTENT; // Suppression réussie
+    } catch (error) {
+      throw error;
+    }
   }
 
   public async findByMail(mail: string): Promise<User> {

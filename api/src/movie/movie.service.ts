@@ -4,6 +4,7 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  HttpStatus,
 } from '@nestjs/common';
 import { wrap } from '@mikro-orm/core';
 
@@ -70,16 +71,20 @@ export class MovieService {
     return movie;
   }
 
-  public async deleteMovie(movieId: number): Promise<void> {
-    const movie = await this.findMovieById(movieId);
-    await this.movieRepository.removeAndFlush(movie);
+  public async deleteMovie(movieId: number): Promise<HttpStatus> {
+    try {
+      const movie = await this.findMovieById(movieId);
+      await this.movieRepository.removeAndFlush(movie);
+      return HttpStatus.NO_CONTENT; // Suppression réussie
+    } catch (error) {
+      throw error;
+    }
   }
 
   public async addSessionToMovie(
     movieId: number,
     session: MovieSession,
   ): Promise<MovieSession> {
-    console.log('test');
     try {
       const movie = await this.findMovieById(movieId);
 

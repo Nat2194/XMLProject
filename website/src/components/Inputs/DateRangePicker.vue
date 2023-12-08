@@ -1,7 +1,5 @@
 <template>
 	<div>
-		<h2>Rechercher des séances</h2>
-
 		<!-- Sélection de la date -->
 		<VueDatePicker
 			v-model="sessionDate.date"

@@ -1,6 +1,6 @@
 <template>
 	<div class="container my-auto mx-auto p-4">
-		<h1 class="text-3xl font-semibold mb-4">Gestion des Comptes Respos</h1>
+		<h1 class="text-3xl font-semibold mb-4">Gestion des Comptes</h1>
 
 		<div class="space-x-4 mb-4">
 			<!-- Style des boutons pour changer de formulaire -->
@@ -90,14 +90,35 @@
 			class="mb-4"
 			@submit.prevent="updateUser"
 		>
-			<div class="form-group">
-				<label for="updateMail" class="block">Mail *</label>
-				<input
-					id="updateMail"
-					v-model="userData.mail"
-					required
-					class="input"
+			<div class="form-group flex justify-center">
+				<TextInput
+					v-model="mail"
+					placeholder="Chercher par mail"
+					class="mb-4 w-1/2 flex justify-center"
+					@input="searchUsers"
 				/>
+			</div>
+
+			<div class="form-group">
+				<!-- Liste des utilisateurs -->
+				<UserList
+					v-if="activeForm === 'update' && mail && !selectedUser"
+					:user-list="filteredUsers"
+					@select-user="selectUser"
+				/>
+			</div>
+
+			<div class="form-group flex justify-center">
+				<div
+					v-if="selectedUser"
+					class="form-group w-1/2 mb-4 flex justify-center"
+				>
+					<div class="bg-light-blue p-4 shadow rounded-lg m-2">
+						<div class="mb-2">
+							<strong>Mail:</strong> {{ selectedUser.mail }}
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="form-group">
@@ -119,6 +140,11 @@
 			</div>
 
 			<div class="form-group">
+				<label for="updateMail" class="block">Nouveau Mail</label>
+				<input id="updateMail" v-model="userData.mail" class="input" />
+			</div>
+
+			<div class="form-group">
 				<label for="updatePassword" class="block">Mot de passe</label>
 				<input
 					id="updatePassword"
@@ -135,29 +161,36 @@
 		<form
 			v-if="activeForm === 'read'"
 			class="mb-4"
-			@submit.prevent="readUser"
+			@submit.prevent="searchUsers"
 		>
+			<!-- Barre de recherche pour le nom de famille -->
 			<div class="form-group">
-				<label for="readLastName" class="block">Nom</label>
-				<input
-					id="readLastName"
+				<TextInput
 					v-model="userData.lastname"
-					class="input"
+					placeholder="Nom"
+					class="mb-4"
+					@input="searchUsers"
 				/>
 			</div>
 
+			<!-- Barre de recherche pour le nom de famille -->
 			<div class="form-group">
-				<label for="readFirstName" class="block">Prénom</label>
-				<input
-					id="readFirstName"
+				<TextInput
 					v-model="userData.firstname"
-					class="input"
+					placeholder="Prénom"
+					class="mb-4"
+					@input="searchUsers"
 				/>
 			</div>
 
+			<!-- Barre de recherche pour le mail -->
 			<div class="form-group">
-				<label for="readMail" class="block">Mail</label>
-				<input id="readMail" v-model="userData.mail" class="input" />
+				<TextInput
+					v-model="mail"
+					placeholder="Mail"
+					class="mb-4"
+					@input="searchUsers"
+				/>
 			</div>
 
 			<button type="submit" class="btn-primary">Chercher</button>
@@ -169,14 +202,35 @@
 			class="mb-4"
 			@submit.prevent="deleteUser"
 		>
-			<div class="form-group">
-				<label for="deleteMail" class="block">Mail *</label>
-				<input
-					id="deleteMail"
-					v-model="userData.mail"
-					required
-					class="input"
+			<div class="form-group flex justify-center">
+				<TextInput
+					v-model="mail"
+					placeholder="Chercher par mail"
+					class="mb-4 w-1/2 flex justify-center"
+					@input="searchUsers"
 				/>
+			</div>
+
+			<div class="form-group">
+				<!-- Liste des utilisateurs -->
+				<UserList
+					v-if="activeForm === 'delete' && mail && !selectedUser"
+					:user-list="filteredUsers"
+					@select-user="selectUser"
+				/>
+			</div>
+
+			<div class="form-group flex justify-center">
+				<div
+					v-if="selectedUser"
+					class="form-group w-1/2 mb-4 flex justify-center"
+				>
+					<div class="bg-light-blue p-4 shadow rounded-lg m-2">
+						<div class="mb-2">
+							<strong>Mail:</strong> {{ selectedUser.mail }}
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<button type="submit" class="btn-primary">
@@ -193,47 +247,55 @@
 		</div>
 
 		<!-- Liste des utilisateurs -->
-		<UserList v-if="activeForm === 'read'" :user-list="userList" />
+		<UserList v-if="activeForm === 'read'" :user-list="filteredUsers" />
 	</div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth.store';
+import { ref, computed } from 'vue';
+import { useUserStore } from '@/stores/user.store';
 import UserList from '@/components/UserList.vue';
+import TextInput from '@/components/Inputs/TextInput.vue';
 
 // Déclarez une variable pour stocker la liste d'utilisateurs
-const userList = ref([]);
 
 const activeForm = ref('create');
 const result = ref(null);
 
-const authStore = useAuthStore();
+const userStore = useUserStore();
 
 // Données pour les formulaires de création, mise à jour, lecture et suppression
-const userData = {
+const userData = ref({
 	lastname: '',
 	firstname: '',
 	mail: '',
 	password: '',
+});
+
+const selectedUser = ref(null);
+
+const mail = ref(''); // Only used to look up a user in the Update and Delete parts
+
+// Définition de la méthode pour sélectionner un user
+const selectUser = (user) => {
+	selectedUser.value = user;
 };
 
 // Fonctions pour changer le formulaire actif
 const changeForm = (formName) => {
 	activeForm.value = formName;
 	result.value = '';
-	userData.lastname = '';
-	userData.firstname = '';
-	userData.mail = '';
-	userData.password = '';
-	userList.value = [];
+	userData.value.lastname = '';
+	userData.value.firstname = '';
+	userData.value.mail = '';
+	userData.value.password = '';
 };
 
 // Fonctions pour les actions (create, update, read, delete)
 const createUser = async () => {
 	result.value = '';
 	try {
-		const response = await authStore.createUser(userData);
+		const response = await userStore.createUser(userData.value);
 		if (response) {
 			result.value = 'Compté créé'; // Message de succès ou autre traitement
 		} else {
@@ -244,37 +306,45 @@ const createUser = async () => {
 	}
 };
 
-const readUser = async () => {
-	result.value = '';
-	try {
-		// Appelez la méthode du store d'authentification pour lire un utilisateur
-		userList.value = [];
-		const response = await authStore.readUser(userData);
-		userList.value = response; // Mettez à jour la liste d'utilisateurs
-	} catch (error) {
-		result.value = 'Error reading user: ' + error.message;
-	}
-};
-
 const updateUser = async () => {
-	result.value = '';
-	try {
-		const response = await authStore.updateUser(userData);
-		if (response.data === false) {
-			result.value = 'Compte non trouvé'; // Message d'erreur
-		} else {
-			result.value = 'Compte modifié'; // Message de succès ou autre traitement
+	if (selectedUser.value) {
+		result.value = '';
+		let updateCriteria = {};
+		if (userData.value.lastname) {
+			updateCriteria.lastname = userData.value.lastname;
 		}
-	} catch (error) {
-		result.value = 'Error updating user: ' + error.message;
+		if (userData.value.firstname) {
+			updateCriteria.firstname = userData.value.firstname;
+		}
+		if (userData.value.mail) {
+			updateCriteria.mail = userData.value.mail;
+		}
+		if (userData.value.password) {
+			updateCriteria.v = userData.value.password;
+		}
+		try {
+			const response = await userStore.updateUser(
+				selectedUser.value.userId,
+				updateCriteria
+			);
+			if (response.data === false) {
+				result.value = 'Compte non trouvé'; // Message d'erreur
+			} else {
+				result.value = 'Compte modifié'; // Message de succès ou autre traitement
+			}
+		} catch (error) {
+			result.value = 'Error updating user: ' + error.message;
+		}
+	} else {
+		result.value = 'Sélectionnez un utilisateur';
 	}
 };
 
 const deleteUser = async () => {
 	result.value = '';
 	try {
-		const response = await authStore.deleteUser(userData.mail);
-		if (response.data === true) {
+		const response = await userStore.deleteUser(selectedUser.value.userId);
+		if (response.data === 204) {
 			result.value = 'Compte supprimé'; // Message de succès ou autre traitement
 		} else {
 			result.value = 'Compte non trouvé'; // Message d'erreur
@@ -282,6 +352,32 @@ const deleteUser = async () => {
 	} catch (error) {
 		result.value = error.message;
 	}
+};
+
+// Obtenez la liste des séances de films filtrées en fonction des critères de recherche
+const filteredUsers = computed(() => {
+	// Utilisez les résultats du store pour les séances de films
+	return userStore.users;
+});
+
+// Fonction pour rechercher des séances de film en fonction des critères
+const searchUsers = () => {
+	let searchCriteria = {};
+	selectedUser.value = null;
+	if (userData.value.lastname) {
+		searchCriteria.lastname = userData.value.lastname.toLowerCase();
+	}
+	if (userData.value.firstname) {
+		searchCriteria.firstname = userData.value.firstname.toLowerCase();
+	}
+	if (mail.value) {
+		searchCriteria.mail = mail.value;
+	} else if (userData.value.mail) {
+		searchCriteria.mail = userData.value.mail;
+	}
+
+	// Appelez la méthode de recherche du store
+	userStore.searchUsers(searchCriteria);
 };
 </script>
 
@@ -310,7 +406,7 @@ const deleteUser = async () => {
 	padding: 10px 20px;
 	border-radius: 5px;
 	cursor: pointer;
-	transition: background-color 0.3s ease;
+	transition: background-color 0.3s easse;
 }
 
 .btn-primary.btn-active {

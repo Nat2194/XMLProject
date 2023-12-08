@@ -1,9 +1,10 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
+import { EntityRepository } from '@mikro-orm/postgresql';
 import {
   Injectable,
   ConflictException,
   NotFoundException,
+  HttpStatus,
 } from '@nestjs/common';
 import { wrap } from '@mikro-orm/core';
 
@@ -168,7 +169,6 @@ export class MovieSessionService {
       } else {
         delete query.theatreCity;
       }
-      console.log(criteria.movieName);
       if (criteria.movieName) {
         query.movie = await this.movieService.findMovieByPartialName(
           criteria.movieName,
@@ -194,14 +194,13 @@ export class MovieSessionService {
     return session;
   }
 
-  public async deleteMovieSession(sessionId: number): Promise<void> {
+  public async deleteMovieSession(sessionId: number): Promise<HttpStatus> {
     try {
       const session = await this.findMovieSessionById(sessionId);
       await this.movieSessionRepository.removeAndFlush(session);
+      return HttpStatus.NO_CONTENT; // Suppression réussie
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
+      throw error;
     }
   }
 }

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import $axios from '@/config/axios';
+import { $axios } from '@/config/axios';
 
 export const useUserStore = defineStore({
 	id: 'userStore',
@@ -47,6 +47,19 @@ export const useUserStore = defineStore({
 				throw error;
 			}
 		},
+		async searchUsers(searchCriteria) {
+			try {
+				const response = await $axios.post(
+					'/user/search',
+					searchCriteria
+				);
+				this.users = response.data;
+				return response.data;
+			} catch (error) {
+				console.error('Error searching movie sessions:', error);
+				throw error;
+			}
+		},
 		async updateUser(id, user) {
 			try {
 				const response = await $axios.patch(`/user/${id}`, user);
@@ -66,8 +79,9 @@ export const useUserStore = defineStore({
 		},
 		async deleteUser(id) {
 			try {
-				await $axios.delete(`/user/${id}`);
+				const response = await $axios.delete(`/user/${id}`);
 				this.users = this.users.filter((u) => u.id !== id);
+				return response;
 			} catch (error) {
 				console.error('Error deleting user:', error);
 				throw error;

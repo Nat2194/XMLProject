@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Delete,
+  HttpStatus,
 } from '@nestjs/common';
 
 // Custom Imports
@@ -93,7 +94,7 @@ export class MovieSessionController {
 
   @Auth()
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) sessionId: number): Promise<void> {
+  delete(@Param('id', ParseIntPipe) sessionId: number): Promise<HttpStatus> {
     return this.movieSessionService.deleteMovieSession(sessionId);
   }
 }

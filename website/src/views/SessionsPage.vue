@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useMovieSessionStore } from '@/stores/movie-session.store.js';
 import TextInput from '@/components/Inputs/TextInput.vue';
 import SessionList from '@/components/SessionList.vue';
@@ -78,6 +78,15 @@ const filteredSessions = computed(() => {
 	// Utilisez les résultats du store pour les séances de films
 	return movieSessionStore.movieSessions;
 });
+
+// Observez les changements de la recherche de séances
+watch(
+	sessionDate,
+	() => {
+		searchSessions();
+	},
+	{ deep: true }
+);
 
 // Fonction pour rechercher des séances de film en fonction des critères
 const searchSessions = () => {

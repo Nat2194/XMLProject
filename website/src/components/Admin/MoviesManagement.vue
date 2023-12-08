@@ -136,9 +136,37 @@
 			class="mb-4"
 			@submit.prevent="updateMovie"
 		>
-			<div class="form-group">
-				<label for="movieId" class="block">Id de Film:</label>
-				<input id="movieId" v-model="movieId" class="input" required />
+			<div class="flex flex-row justify-center items-center">
+				<SearchBar
+					v-model="searchKeyword"
+					placeholder="Rechercher un film"
+					class="mb-4 input"
+					@input="searchMovies"
+				/>
+			</div>
+			<div
+				v-if="
+					activeForm === 'update' && searchKeyword && !selectedMovie
+				"
+				class="flex flex-row justify-center items-center"
+			>
+				<MovieCarousel
+					v-model:searchKeyword="searchKeyword"
+					class="input"
+					@select-movie="selectMovie"
+				/>
+			</div>
+			<div class="form-group flex justify-center">
+				<div
+					v-if="selectedMovie"
+					class="form-group w-1/2 mb-4 flex justify-center"
+				>
+					<div class="bg-light-blue p-4 shadow rounded-lg m-2">
+						<div class="mb-2">
+							<strong>Mail:</strong> {{ selectedMovie.title }}
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="form-group">
 				<label for="title" class="block">Titre</label>
@@ -232,14 +260,37 @@
 			class="mb-4"
 			@submit.prevent="deleteMovie"
 		>
-			<div class="form-group">
-				<label for="movieId" class="block">Id de Film:</label>
-				<input
-					id="sessionId"
-					v-model="movieId"
-					class="input"
-					required
+			<div class="flex flex-row justify-center items-center">
+				<SearchBar
+					v-model="searchKeyword"
+					placeholder="Rechercher un film"
+					class="mb-4 input"
+					@input="searchMovies"
 				/>
+			</div>
+			<div
+				v-if="
+					activeForm === 'delete' && searchKeyword && !selectedMovie
+				"
+				class="flex flex-row justify-center items-center"
+			>
+				<MovieCarousel
+					v-model:searchKeyword="searchKeyword"
+					class="input"
+					@select-movie="selectMovie"
+				/>
+			</div>
+			<div class="form-group flex justify-center">
+				<div
+					v-if="selectedMovie"
+					class="form-group w-1/2 mb-4 flex justify-center"
+				>
+					<div class="bg-light-blue p-4 shadow rounded-lg m-2">
+						<div class="mb-2">
+							<strong>Mail:</strong> {{ selectedMovie.title }}
+						</div>
+					</div>
+				</div>
 			</div>
 			<button type="submit" class="btn-primary">Supprimer le film</button>
 		</form>
@@ -257,12 +308,27 @@
 <script setup>
 import { ref } from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
+import SearchBar from '../Inputs/SearchBar.vue';
+import MovieCarousel from '@/components/MovieCarousel.vue';
 import { useMovieStore } from '@/stores/movie.store';
 
 const activeForm = ref('create');
 const result = ref(null);
 
 const movieStore = useMovieStore();
+
+const selectedMovie = ref(null); // Ajout de la réf pour le film sélectionné
+const searchKeyword = ref('');
+
+// Définition de la méthode pour sélectionner un film
+const selectMovie = (movie) => {
+	selectedMovie.value = movie;
+};
+
+const searchMovies = () => {
+	selectedMovie.value = null;
+	movieStore.getAllMovies();
+};
 
 // Données pour les formulaires de création, mise à jour, lecture et suppression
 const movieData = ref({
@@ -277,11 +343,10 @@ const movieData = ref({
 	endDate: null,
 });
 
-const movieId = ref(0);
-
 // Fonctions pour changer le formulaire actif
 const changeForm = (formName) => {
 	activeForm.value = formName;
+	selectMovie.value = null;
 	result.value = '';
 	movieData.value = {
 		title: '',
@@ -306,10 +371,12 @@ const createMovie = async () => {
 
 	try {
 		const response = await movieStore.createMovie(movieData.value);
-		if (response) {
+		if (response.status == 201 || response.status == 200) {
 			result.value = 'Film créé'; // Message de succès ou autre traitement
-		} else {
+		} else if (response.status == 409) {
 			result.value = 'Un film possédant ce nom existe déjà'; // Message d'erreur
+		} else {
+			result.value = 'Erreur lors de la création du film'; // Message d'erreur
 		}
 	} catch (error) {
 		result.value = 'Error creating movie: ' + error.message;
@@ -318,17 +385,44 @@ const createMovie = async () => {
 
 const updateMovie = async () => {
 	result.value = '';
-	movieData.value.startDate = new Date(movieData.value.startDate);
-	movieData.value.startDate.setHours(0, 0, 0, 0);
-	movieData.value.endDate = new Date(movieData.value.endDate);
-	movieData.value.endDate.setHours(23, 59, 59, 999);
+	let updateCriteria = {};
+	if (movieData.value.title) {
+		updateCriteria.title = movieData.value.title;
+	}
+	if (movieData.value.startDate) {
+		updateCriteria.startDate = new Date(movieData.value.startDate);
+		updateCriteria.startDate.setHours(0, 0, 0, 0);
+	}
+	if (movieData.value.endDate) {
+		updateCriteria.endDate = new Date(movieData.value.endDate);
+		updateCriteria.endDate.setHours(23, 59, 59, 999);
+	}
+	if (movieData.value.duration) {
+		updateCriteria.duration = movieData.value.duration;
+	}
+	if (movieData.value.language) {
+		updateCriteria.language = movieData.value.language;
+	}
+	if (movieData.value.subtitles) {
+		updateCriteria.subtitles = movieData.value.subtitles;
+	}
+	if (movieData.value.director) {
+		updateCriteria.director = movieData.value.director;
+	}
+	if (movieData.value.mainActors) {
+		updateCriteria.mainActors = movieData.value.mainActors;
+	}
+	if (movieData.value.minAgeRequired) {
+		updateCriteria.minAgeRequired = movieData.value.minAgeRequired;
+	}
 
 	try {
 		const response = await movieStore.updateMovie(
-			movieId.value,
-			movieData.value
+			selectedMovie.value.movieId,
+			updateCriteria
 		);
-		if (response) {
+		console.log(response);
+		if (response.status == 201 || response.status == 200) {
 			result.value = 'Film mis à jour'; // Message de succès ou autre traitement
 		} else {
 			result.value = 'Erreur lors de la mise à jour du film'; // Message d'erreur
@@ -342,8 +436,10 @@ const deleteMovie = async () => {
 	result.value = '';
 
 	try {
-		const response = await movieStore.deleteMovie(movieId.value);
-		if (response) {
+		const response = await movieStore.deleteMovie(
+			selectedMovie.value.movieId
+		);
+		if (response.data === 204) {
 			result.value = 'Film supprimé'; // Message de succès ou autre traitement
 		} else {
 			result.value = 'Film non supprimé'; // Message d'erreur

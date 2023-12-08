@@ -256,7 +256,7 @@
 				/>
 			</div>
 			<button type="submit" class="btn-primary">
-				Supprimer le compte
+				Supprimer la séance
 			</button>
 		</form>
 
@@ -323,10 +323,12 @@ const createSession = async () => {
 		const response = await sessionStore.createMovieSession(
 			sessionData.value
 		);
-		if (response) {
+		if (response.status == 201 || response.status == 200) {
 			result.value = 'Séance créée'; // Message de succès ou autre traitement
-		} else {
+		} else if (response.status == 409) {
 			result.value = 'Cette séance existe déjà'; // Message d'erreur
+		} else {
+			result.value = 'Erreur lors de la création de la séance'; // Message d'erreur
 		}
 	} catch (error) {
 		result.value = 'Error creating session: ' + error.message;
@@ -335,15 +337,42 @@ const createSession = async () => {
 
 const updateSession = async () => {
 	result.value = '';
+	let updateCriteria = {};
+
+	if (!selectedMovie.value) {
+		result.value = 'Choisissez un film';
+		return null;
+	}
+	if (sessionData.value.startDate) {
+		updateCriteria.startDate = new Date(sessionData.value.startDate);
+	}
+	if (sessionData.value.endDate) {
+		updateCriteria.endDate = new Date(sessionData.value.endDate);
+	}
+	if (sessionData.value.theatreName) {
+		updateCriteria.theatreName = sessionData.value.theatreName;
+	}
+	if (sessionData.value.theatreAddress) {
+		updateCriteria.theatreAddress = sessionData.value.theatreAddress;
+	}
+	if (sessionData.value.theatreCity) {
+		updateCriteria.theatreCity = sessionData.value.theatreCity;
+	}
+	if (selectedMovie.value) {
+		updateCriteria.movieId = selectedMovie.value.movieId;
+	}
+
 	try {
 		const response = await sessionStore.updateMovieSession(
 			sessionId.value,
-			sessionData.value
+			updateCriteria
 		);
-		if (response.data === false) {
+		if (response.status == 201 || response.status == 200) {
+			result.value = 'Séance modifiée'; // Message de succès ou autre traitement
+		} else if (response.status == 404) {
 			result.value = 'Séance non trouvée'; // Message d'erreur
 		} else {
-			result.value = 'Séance modifiée'; // Message de succès ou autre traitement
+			result.value = 'Erreur lors de la mise à jour de la séance';
 		}
 	} catch (error) {
 		result.value = 'Error updating session: ' + error.message;
@@ -354,7 +383,8 @@ const deleteSession = async () => {
 	result.value = '';
 	try {
 		const response = await sessionStore.deleteMovieSession(sessionId.value);
-		if (response.data === true) {
+		console.log(response);
+		if (response.data === 204) {
 			result.value = 'Séance supprimée'; // Message de succès ou autre traitement
 		} else {
 			result.value = 'Séance non trouvée'; // Message d'erreur
