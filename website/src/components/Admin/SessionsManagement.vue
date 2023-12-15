@@ -383,7 +383,6 @@ const deleteSession = async () => {
 	result.value = '';
 	try {
 		const response = await sessionStore.deleteMovieSession(sessionId.value);
-		console.log(response);
 		if (response.data === 204) {
 			result.value = 'Séance supprimée'; // Message de succès ou autre traitement
 		} else {

@@ -38,7 +38,7 @@
 			<TextInput
 				v-model="sessionCity"
 				placeholder="Ville"
-				class="mb-4"
+				class="mb-4 mt-4"
 				@input="searchSessions"
 			/>
 

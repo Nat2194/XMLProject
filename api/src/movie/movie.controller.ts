@@ -48,7 +48,7 @@ export class MovieController {
     return this.movieService.updateMovie(movieId, dto);
   }
 
-  @Auth() // Add authentication decorator if needed
+  @Auth()
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) movieId: number): Promise<HttpStatus> {
     return this.movieService.deleteMovie(movieId);
